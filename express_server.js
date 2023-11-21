@@ -55,8 +55,10 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  // console.log(req.params);
-  const longURL = urlDatabase[req.params.id];
+  // if the id does not exist, redirect to page not found, otherwise the longURL is associated with the id
+  const longURL = req.params.id === 'undefined' ? "/404"
+    : urlDatabase[req.params.id];
+
   res.redirect(longURL);
 });
 
