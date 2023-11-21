@@ -8,7 +8,7 @@ const generateRandomString = () => {
   /*
     - toString(36) converts the random number to base 36 (character associated with digit)
     - take substring from index 2 to remove the 0. from randomly generated number
-    - substring 2, 8 returns 6 characters
+    - substring(2, 8) returns 6 characters
   */
   const randomChars = Math.random().toString(36).substring(2, 8);
   return randomChars;
@@ -38,8 +38,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log POST request to the console
-  res.send("Ok"); // Respond with "Ok"
+  urlDatabase[generateRandomString()] = req.body.longURL;
 });
 
 app.get("/urls/new", (req, res) => {
