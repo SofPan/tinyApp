@@ -4,6 +4,19 @@ const PORT = 8080;
 
 app.set("view engine", "ejs");
 
+const generateRandomString = () => {
+  /*
+    - toString(36) converts the random number to base 36 (character associated with digit)
+    - take substring from index 2 to remove the 0. from randomly generated number
+    - substring 2, 8 returns 6 characters
+  */
+  const randomChars = Math.random().toString(36).substring(2, 8);
+  return randomChars;
+};
+
+generateRandomString();
+
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
