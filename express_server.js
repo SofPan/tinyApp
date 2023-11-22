@@ -14,9 +14,6 @@ const generateRandomString = () => {
   return randomChars;
 };
 
-generateRandomString();
-
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -24,6 +21,11 @@ const urlDatabase = {
 
 app.use(express.urlencoded({ extended: true }));
 
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}!`);
+});
+
+// GET REQUESTS
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -35,14 +37,6 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
-});
-
-app.post("/urls", (req, res) => {
-  const createId = generateRandomString();
-  urlDatabase[createId] = req.body.longURL;
-  // const templateVars = { longURL: urlDatabase[createId] };
-  // res.render("urls_new", templateVars);
-  res.redirect(`/urls/${createId}`);
 });
 
 app.get("/urls/new", (req, res) => {
@@ -62,10 +56,9 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}!`);
+// POST REQUESTS
+app.post("/urls", (req, res) => {
+  const createId = generateRandomString();
+  urlDatabase[createId] = req.body.longURL;
+  res.redirect(`/urls/${createId}`);
 });
