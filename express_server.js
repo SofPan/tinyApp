@@ -75,3 +75,9 @@ app.post("/urls/:id/update", (req, res) => {
   urlDatabase[idToUpdate] = editedLongURL;
   res.redirect(`/urls/${idToUpdate}`);
 });
+
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  res.cookie("username", username);
+  res.redirect('/urls');
+});
