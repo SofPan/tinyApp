@@ -16,10 +16,11 @@
           <label for="username"></label>
           <% if(!username) { %>
             <input class="form-control" type="text" name="username" placeholder="Username" />
+            <button type="submit" class="btn btn-outline-dark" style="margin-left: 1em">Login</button>
             <% } else { %>
               <%= username %>
+                <button type="submit" class="btn btn-outline-dark" style="margin-left: 1em">Logout</button>
                 <% } %>
-                  <button type="submit" class="btn btn-outline-dark" style="margin-left: 1em">Login</button>
         </div>
       </form>
     </div>
