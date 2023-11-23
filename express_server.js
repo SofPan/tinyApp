@@ -20,6 +20,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -102,7 +115,24 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
+// This endpoint should add a new user object to the global users object. The user object should include the user's id, email and password, similar to the example above.
 
+// To generate a random user ID, use the same function you use to generate random IDs for URLs.
+// After adding the user, set a user_id cookie containing the user's newly generated ID.
+// Redirect the user to the /urls page.
+// Test that the users object is properly being appended to. You can insert a console.log or debugger prior to the redirect logic to inspect what data the object contains.
+
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+  const newUserID = generateRandomString();
+  users[newUserID] = {
+    id: newUserID,
+    email: email,
+    password: password
+  };
+  res.cookie("user_id", newUserID);
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}!`);
