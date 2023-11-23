@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
@@ -13,6 +14,15 @@ const generateRandomString = () => {
   */
   const randomChars = Math.random().toString(36).substring(2, 8);
   return randomChars;
+};
+
+const getUserByEmail = (email, users) => {
+  for (const user in users) {
+    if (user["email"] === email) {
+      return true;
+    }
+  }
+  return false;
 };
 
 const urlDatabase = {
@@ -33,10 +43,12 @@ const users = {
   },
 };
 
+/* ----- MIDDLEWARE ----- */
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 app.use(cookieParser());
 
-// GET REQUESTS
+/* ----- GET REQUESTS ----- */
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
@@ -84,7 +96,7 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-// POST REQUESTS
+/* ----- POST REQUESTS ----- */
 app.post("/urls", (req, res) => {
   const createId = generateRandomString();
   urlDatabase[createId] = req.body.longURL;
@@ -115,14 +127,24 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  const newUserID = generateRandomString();
-  users[newUserID] = {
-    id: newUserID,
-    email: email,
-    password: password
-  };
-  res.cookie("user_id", newUserID);
-  res.redirect("/urls");
+  // will return true if email is already registered
+  const checkRegistered = getUserByEmail(email, users);
+
+  if (!email || !password) {
+    return res.status(400).end("Must fill out email and password fields");
+  } else if (checkRegistered) {
+    return res.status(400).end("Email already in use");
+  } else {
+    const newUserID = generateRandomString();
+    users[newUserID] = {
+      id: newUserID,
+      email: email,
+      password: password
+    };
+
+    res.cookie("user_id", newUserID);
+    res.redirect("/urls");
+  }
 });
 
 app.listen(PORT, () => {
