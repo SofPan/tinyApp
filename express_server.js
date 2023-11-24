@@ -139,6 +139,7 @@ app.get("/urls/:id", (req, res) => {
   }
   if (!userURLs[currentID]) {
     templateVars.belongsToUser = false;
+    res.redirect(`/error/${currentID}`);
   }
   res.render("urls_show", templateVars);
 });
@@ -152,8 +153,8 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get("/error", (req, res) => {
-  const userCookie = req.cookies("user_id");
+app.get("/error/:id", (req, res) => {
+  const userCookie = req.cookies["user_id"];
   const currentID = req.params.id;
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const templateVars = {
@@ -188,21 +189,24 @@ app.post("/urls/:id/delete", (req, res) => {
   const userCookie = req.cookies["user_id"];
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToDelete = req.params.id;
-  const templateVars = {
-    id: idToDelete
-  };
   if (userURLs[idToDelete]) {
     delete urlDatabase[idToDelete];
     res.redirect('/urls');
   }
-  res.redirect("/error", templateVars);
+  res.redirect(`/error/${idToDelete}`);
 });
 
 app.post("/urls/:id/update", (req, res) => {
+  const userCookie = req.cookies["user_id"];
+  const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToUpdate = req.params.id;
-  const editedLongURL = req.body.longURL;
-  urlDatabase[idToUpdate].longURL = editedLongURL;
-  res.redirect(`/urls/${idToUpdate}`);
+  if (userURLs[idToUpdate]) {
+    const editedLongURL = req.body.longURL;
+    urlDatabase[idToUpdate].longURL = editedLongURL;
+    res.redirect(`/urls/${idToUpdate}`);
+  }
+
+  res.redirect(`/error/${idToUpdate}`);
 });
 
 app.post("/login", (req, res) => {

@@ -15,15 +15,13 @@
       <!-- User is not logged in -->
       <% if(!user) { %>
         <h5 style="font-weight: bold; color: red;">You must login to view this page!</h5>
-      <% } %>
-      <!-- URL does not exist -->
-      <% if(!idExists) { %>
-        <h5 style="font-weight: bold; color: red;">This URL does not exist</h5>
-      <% } %>
-      <!-- URL does not belong to the current user -->
-      <% if (!belongsToUser) { %>
-        <h5 style="font-weight: bold; color: red;">You do not own this URL</h5>
-      <% } %>
+        <!-- URL does not belong to the current user -->
+        <% } else if (!belongsToUser) { %>
+          <h5 style="font-weight: bold; color: red;">You do not own this URL</h5>
+          <!-- URL does not exist -->
+          <% } else if (!idExists) { %>
+            <h5 style="font-weight: bold; color: red;">This URL does not exist</h5>
+            <% } %>
 
     </main>
     <!-- Bootstrap JS -->
