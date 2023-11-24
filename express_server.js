@@ -25,6 +25,16 @@ const getUserByEmail = (email, users) => {
   return false;
 };
 
+const urlsForUserID = (id, database) => {
+  const results = {};
+  for (const entry in database) {
+    if (database[entry].userID === id) {
+      results[entry] = database[entry];
+    }
+  }
+  return results;
+};
+
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
@@ -92,9 +102,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const userCookie = req.cookies["user_id"];
   const templateVars = {
-    user: users[req.cookies["user_id"]],
-    urls: urlDatabase
+    user: users[userCookie],
+    urls: urlsForUserID(userCookie, urlDatabase),
   };
   res.render("urls_index", templateVars);
 });
