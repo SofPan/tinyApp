@@ -13,13 +13,16 @@
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %>
-        </h5>
-        <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>">
-            <%= id %>
-          </a>
-        </p>
+        <% if (!longURL) { %>
+          <h5 style="font-weight: bold; color: red;">This URL does not exist</h5>
+          <% } else { %>
+            <h5 class="card-title">TinyURL for: <%= longURL %>
+            </h5>
+            <p class="card-text">
+              Short URL ID: <a href="/u/<%= id %>">
+                <%= id %>
+              </a>
+            </p>
       </div>
       <div class="card-footer text-muted">
         <div class="card-body">
@@ -34,6 +37,7 @@
           </form>
         </div>
       </div>
+      <% } %>
     </div>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
