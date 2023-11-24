@@ -26,8 +26,14 @@ const getUserByEmail = (email, users) => {
 };
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "quickUser"
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "quickUser"
+  },
 };
 
 const users = {
@@ -109,7 +115,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user: users[req.cookies["user_id"]],
   };
   res.render("urls_show", templateVars);
@@ -117,8 +123,9 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   // if the id does not exist, redirect to page not found, otherwise the longURL is associated with the id
-  const longURL = req.params.id === 'undefined' ? "/404"
-    : urlDatabase[req.params.id];
+  const longURL = req.params.id === 'undefined' ?
+    res.status(404).end("404 Page Not Found")
+    : urlDatabase[req.params.id].longURL;
 
   res.redirect(longURL);
 });
@@ -128,10 +135,13 @@ app.post("/urls", (req, res) => {
   const userCookie = req.cookies["user_id"];
   if (userCookie) {
     const createId = generateRandomString();
-    urlDatabase[createId] = req.body.longURL;
+    urlDatabase[createId] = {
+      longURL: req.body.longURL,
+      userID: userCookie,
+    };
     res.redirect(`/urls/${createId}`);
   }
-  res.send("<h3>You must be logged in to create new urls</h3>");
+  res.redirect("/urls");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -143,7 +153,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   const idToUpdate = req.params.id;
   const editedLongURL = req.body.longURL;
-  urlDatabase[idToUpdate] = editedLongURL;
+  urlDatabase[idToUpdate].longURL = editedLongURL;
   res.redirect(`/urls/${idToUpdate}`);
 });
 
