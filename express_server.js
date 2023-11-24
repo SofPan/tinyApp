@@ -152,6 +152,24 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/error", (req, res) => {
+  const userCookie = req.cookies("user_id");
+  const currentID = req.params.id;
+  const userURLs = urlsForUserID(userCookie, urlDatabase);
+  const templateVars = {
+    user: users[userCookie],
+    idExists: true,
+    belongsToUser: true
+  };
+  if (!urlDatabase[currentID]) {
+    templateVars.idExists = false;
+  }
+  if (!userURLs[currentID]) {
+    templateVars.belongsToUser = false;
+  }
+  res.render("error", templateVars);
+});
+
 /* ----- POST REQUESTS ----- */
 app.post("/urls", (req, res) => {
   const userCookie = req.cookies["user_id"];
@@ -170,11 +188,14 @@ app.post("/urls/:id/delete", (req, res) => {
   const userCookie = req.cookies["user_id"];
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToDelete = req.params.id;
+  const templateVars = {
+    id: idToDelete
+  };
   if (userURLs[idToDelete]) {
     delete urlDatabase[idToDelete];
     res.redirect('/urls');
   }
-  res.redirect("/error");
+  res.redirect("/error", templateVars);
 });
 
 app.post("/urls/:id/update", (req, res) => {
