@@ -124,11 +124,18 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  const userCookie = req.cookies["user_id"];
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
-    user: users[req.cookies["user_id"]],
+    user: users[userCookie],
+    belongsToUser: true
   };
+  const userURLs = urlsForUserID(userCookie, urlDatabase);
+
+  if (!userURLs[req.params.id]) {
+    templateVars.belongsToUser = false;
+  }
   res.render("urls_show", templateVars);
 });
 

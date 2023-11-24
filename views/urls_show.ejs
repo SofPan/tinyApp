@@ -15,14 +15,18 @@
       <div class="card-body">
         <% if (!longURL) { %>
           <h5 style="font-weight: bold; color: red;">This URL does not exist</h5>
-          <% } else { %>
-            <h5 class="card-title">TinyURL for: <%= longURL %>
-            </h5>
-            <p class="card-text">
-              Short URL ID: <a href="/u/<%= id %>">
-                <%= id %>
-              </a>
-            </p>
+          <% } else if (!user){ %>
+            <h5 style="font-weight: bold; color: red;">You must login to view this page!</h5>
+            <% } else if (!belongsToUser) { %>
+              <h5 style="font-weight: bold; color: red;">You do not own this URL</h5>
+              <% } else { %>
+                <h5 class="card-title">TinyURL for: <%= longURL %>
+                </h5>
+                <p class="card-text">
+                  Short URL ID: <a href="/u/<%= id %>">
+                    <%= id %>
+                  </a>
+                </p>
       </div>
       <div class="card-footer text-muted">
         <div class="card-body">
