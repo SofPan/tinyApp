@@ -41,6 +41,11 @@ const users = {
     email: "user2@example.com",
     password: "dishwasher-funk",
   },
+  quickUser: {
+    id: "quickUser",
+    email: "quick@email.com",
+    password: "123abc123",
+  }
 };
 
 /* ----- MIDDLEWARE ----- */
@@ -50,7 +55,10 @@ app.use(cookieParser());
 
 /* ----- GET REQUESTS ----- */
 app.get("/", (req, res) => {
-  res.send("Home Page");
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  }
+  res.redirect("/login");
 });
 
 app.get("/login", (req, res) => {
