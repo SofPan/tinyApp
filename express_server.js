@@ -18,8 +18,8 @@ const generateRandomString = () => {
 
 const getUserByEmail = (email, users) => {
   for (const user in users) {
-    if (user["email"] === email) {
-      return true;
+    if (users[user]["email"] === email) {
+      return users[user];
     }
   }
   return false;
@@ -124,6 +124,18 @@ app.post("/urls/:id/update", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  // will return a user object or false if not registered
+  const currentUser = getUserByEmail(email, users);
+  if (!currentUser) {
+    return res.status(403).end("Email not found");
+  }
+
+  if (password !== currentUser.password) {
+    return res.status(403).end("Invalid Password");
+  }
+
+  res.cookie("user_id", currentUser.id);
   res.redirect('/urls');
 });
 
@@ -134,7 +146,7 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  // will return true if email is already registered
+  // will return a user object if email is already registered
   const checkRegistered = getUserByEmail(email, users);
 
   if (!email || !password) {
