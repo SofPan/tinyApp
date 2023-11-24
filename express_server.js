@@ -125,9 +125,13 @@ app.get("/u/:id", (req, res) => {
 
 /* ----- POST REQUESTS ----- */
 app.post("/urls", (req, res) => {
-  const createId = generateRandomString();
-  urlDatabase[createId] = req.body.longURL;
-  res.redirect(`/urls/${createId}`);
+  const userCookie = req.cookies["user_id"];
+  if (userCookie) {
+    const createId = generateRandomString();
+    urlDatabase[createId] = req.body.longURL;
+    res.redirect(`/urls/${createId}`);
+  }
+  res.send("<h3>You must be logged in to create new urls</h3>");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
