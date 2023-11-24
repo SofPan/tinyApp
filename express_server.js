@@ -167,9 +167,14 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  const userCookie = req.cookies["user_id"];
+  const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToDelete = req.params.id;
-  delete urlDatabase[idToDelete];
-  res.redirect('/urls');
+  if (userURLs[idToDelete]) {
+    delete urlDatabase[idToDelete];
+    res.redirect('/urls');
+  }
+  res.redirect("/error");
 });
 
 app.post("/urls/:id/update", (req, res) => {
