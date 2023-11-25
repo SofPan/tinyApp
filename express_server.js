@@ -7,6 +7,9 @@ const PORT = 8080;
 
 app.set("view engine", "ejs");
 
+const passTest = "HelloWorld!";
+const hashTest = bcrypt.hashSync(passTest, 10);
+
 const generateRandomString = () => {
   /*
     - toString(36) converts the random number to base 36 (character associated with digit)
@@ -61,7 +64,7 @@ const users = {
   quickUser: {
     id: "quickUser",
     email: "quick@email.com",
-    password: "123abc123",
+    password: hashTest,
   }
 };
 
@@ -218,7 +221,9 @@ app.post("/login", (req, res) => {
     return res.status(403).end("Email not found");
   }
 
-  if (password !== currentUser.password) {
+  const passwordCheck = bcrypt.compareSync(password, currentUser.password);
+
+  if (!passwordCheck) {
     return res.status(403).end("Invalid Password");
   }
 
