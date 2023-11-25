@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
@@ -71,7 +71,7 @@ const users = {
 /* ----- MIDDLEWARE ----- */
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.use(cookieParser());
+app.use(cookieSession());
 
 /* ----- GET REQUESTS ----- */
 app.get("/", (req, res) => {
