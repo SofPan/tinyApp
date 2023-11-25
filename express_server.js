@@ -71,11 +71,15 @@ const users = {
 /* ----- MIDDLEWARE ----- */
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.use(cookieSession());
+app.use(cookieSession({
+  name: 'session',
+  keys: ["some-key"],
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+}));
 
 /* ----- GET REQUESTS ----- */
 app.get("/", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.userID) {
     res.redirect("/urls");
   }
   res.redirect("/login");
@@ -83,7 +87,7 @@ app.get("/", (req, res) => {
 
 app.get("/login", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]],
+    user: users[req.session.userID],
   };
   if (templateVars.user) {
     res.redirect("/urls");
@@ -93,7 +97,7 @@ app.get("/login", (req, res) => {
 
 app.get("/register", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]],
+    user: users[req.session.userID],
   };
   if (templateVars.user) {
     res.redirect("/urls");
@@ -106,7 +110,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
   const templateVars = {
     user: users[userCookie],
     urls: urlsForUserID(userCookie, urlDatabase),
@@ -115,7 +119,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
 
   const templateVars = {
     user: users[userCookie],
@@ -128,7 +132,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
   const currentID = req.params.id;
   const userURLs = urlsForUserID(userCookie, urlDatabase);
 
@@ -158,7 +162,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.get("/error/:id", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
   const currentID = req.params.id;
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const templateVars = {
@@ -177,7 +181,7 @@ app.get("/error/:id", (req, res) => {
 
 /* ----- POST REQUESTS ----- */
 app.post("/urls", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
   if (userCookie) {
     const createId = generateRandomString();
     urlDatabase[createId] = {
@@ -190,7 +194,7 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToDelete = req.params.id;
   if (userURLs[idToDelete]) {
@@ -201,7 +205,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id/update", (req, res) => {
-  const userCookie = req.cookies["user_id"];
+  const userCookie = req.session.userID;
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToUpdate = req.params.id;
   if (userURLs[idToUpdate]) {
@@ -227,12 +231,12 @@ app.post("/login", (req, res) => {
     return res.status(403).end("Invalid Password");
   }
 
-  res.cookie("user_id", currentUser.id);
+  req.session.userID = currentUser.id;
   res.redirect('/urls');
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  res.clearCookie("session");
   res.redirect("/login");
 });
 
@@ -252,7 +256,7 @@ app.post("/register", (req, res) => {
       email: email,
       password: hashedPassword,
     };
-    res.cookie("user_id", newUserID);
+    req.session.userID = newUserID;
     res.redirect("/urls");
   }
 });
