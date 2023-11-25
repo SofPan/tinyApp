@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
@@ -234,7 +235,7 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
   // will return a user object if email is already registered
   const checkRegistered = getUserByEmail(email, users);
-
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (!email || !password) {
     return res.status(400).end("Must fill out email and password fields");
   } else if (checkRegistered) {
@@ -244,9 +245,8 @@ app.post("/register", (req, res) => {
     users[newUserID] = {
       id: newUserID,
       email: email,
-      password: password
+      password: hashedPassword,
     };
-
     res.cookie("user_id", newUserID);
     res.redirect("/urls");
   }
