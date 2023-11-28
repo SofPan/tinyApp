@@ -9,6 +9,7 @@ const { generateRandomString, getUserByEmail, urlsForUserID } = require('./helpe
 
 app.set("view engine", "ejs");
 
+// hashTest set to quickUser for testing purposes
 const passTest = "HelloWorld!";
 const hashTest = bcrypt.hashSync(passTest, 10);
 
@@ -43,12 +44,11 @@ const users = {
 
 /* ----- MIDDLEWARE ----- */
 app.use(express.urlencoded({ extended: true }));
-// app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
 app.use(cookieSession({
   name: 'session',
-  keys: ["some-key"],
+  keys: ["some-key"],  // keys are required for cookieSession to work
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
 }));
 
