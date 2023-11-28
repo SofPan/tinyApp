@@ -168,30 +168,6 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/urls/:id/delete", (req, res) => {
-  const userCookie = req.session.userID;
-  const userURLs = urlsForUserID(userCookie, urlDatabase);
-  const idToDelete = req.params.id;
-  if (userURLs[idToDelete]) {
-    delete urlDatabase[idToDelete];
-    res.redirect('/urls');
-  }
-  res.redirect(`/error/${idToDelete}`);
-});
-
-app.put("/urls/:id", (req, res) => {
-  const userCookie = req.session.userID;
-  const userURLs = urlsForUserID(userCookie, urlDatabase);
-  const idToUpdate = req.params.id;
-  if (userURLs[idToUpdate]) {
-    const editedLongURL = req.body.longURL;
-    urlDatabase[idToUpdate].longURL = editedLongURL;
-    res.redirect(`/urls/${idToUpdate}`);
-  }
-
-  res.redirect(`/error/${idToUpdate}`);
-});
-
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   // will return a user object or false if not registered
@@ -234,6 +210,34 @@ app.post("/register", (req, res) => {
     req.session.userID = newUserID;
     res.redirect("/urls");
   }
+});
+
+/* ----- PUT REQUESTS ----- */
+
+app.put("/urls/:id", (req, res) => {
+  const userCookie = req.session.userID;
+  const userURLs = urlsForUserID(userCookie, urlDatabase);
+  const idToUpdate = req.params.id;
+  if (userURLs[idToUpdate]) {
+    const editedLongURL = req.body.longURL;
+    urlDatabase[idToUpdate].longURL = editedLongURL;
+    res.redirect(`/urls/${idToUpdate}`);
+  }
+
+  res.redirect(`/error/${idToUpdate}`);
+});
+
+/* ----- DELETE REQUESTS ----- */
+
+app.delete("/urls/:id", (req, res) => {
+  const userCookie = req.session.userID;
+  const userURLs = urlsForUserID(userCookie, urlDatabase);
+  const idToDelete = req.params.id;
+  if (userURLs[idToDelete]) {
+    delete urlDatabase[idToDelete];
+    res.redirect('/urls');
+  }
+  res.redirect(`/error/${idToDelete}`);
 });
 
 app.listen(PORT, () => {
