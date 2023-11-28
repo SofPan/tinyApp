@@ -26,3 +26,14 @@ describe("#getUserByEmail", () => {
     assert.strictEqual(invalidUser, undefined);
   });
 });
+
+describe("#generateRandomString", () => {
+  it("should return 6 characters", () => {
+    const randomString = generateRandomString();
+    assert.strictEqual(randomString.length, 6);
+  });
+  it("should be a string", () => {
+    const randomString = generateRandomString();
+    assert.strictEqual(typeof randomString === "string", true);
+  });
+});
