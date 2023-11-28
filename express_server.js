@@ -43,7 +43,8 @@ const users = {
 
 /* ----- MIDDLEWARE ----- */
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('X-HTTP-Method-Override'));
+// app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('_method'));
 app.use(morgan('dev'));
 app.use(cookieSession({
   name: 'session',
@@ -178,7 +179,7 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect(`/error/${idToDelete}`);
 });
 
-app.post("/urls/:id/update", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   const userCookie = req.session.userID;
   const userURLs = urlsForUserID(userCookie, urlDatabase);
   const idToUpdate = req.params.id;
